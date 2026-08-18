@@ -10,33 +10,128 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BrowseRouteImport } from './routes/browse'
+import { Route as CategoriesRouteImport } from './routes/categories'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as ResellerRouteImport } from './routes/reseller'
+import { Route as SupportRouteImport } from './routes/support'
+import { Route as ProductSlugRouteImport } from './routes/product.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BrowseRoute = BrowseRouteImport.update({
+  id: '/browse',
+  path: '/browse',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriesRoute = CategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResellerRoute = ResellerRouteImport.update({
+  id: '/reseller',
+  path: '/reseller',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductSlugRoute = ProductSlugRouteImport.update({
+  id: '/product/$slug',
+  path: '/product/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/browse': typeof BrowseRoute
+  '/categories': typeof CategoriesRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/pricing': typeof PricingRoute
+  '/reseller': typeof ResellerRoute
+  '/support': typeof SupportRoute
+  '/product/$slug': typeof ProductSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/browse': typeof BrowseRoute
+  '/categories': typeof CategoriesRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/pricing': typeof PricingRoute
+  '/reseller': typeof ResellerRoute
+  '/support': typeof SupportRoute
+  '/product/$slug': typeof ProductSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/browse': typeof BrowseRoute
+  '/categories': typeof CategoriesRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/pricing': typeof PricingRoute
+  '/reseller': typeof ResellerRoute
+  '/support': typeof SupportRoute
+  '/product/$slug': typeof ProductSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/browse'
+    | '/categories'
+    | '/how-it-works'
+    | '/pricing'
+    | '/reseller'
+    | '/support'
+    | '/product/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/browse'
+    | '/categories'
+    | '/how-it-works'
+    | '/pricing'
+    | '/reseller'
+    | '/support'
+    | '/product/$slug'
+  id:
+    | '__root__'
+    | '/'
+    | '/browse'
+    | '/categories'
+    | '/how-it-works'
+    | '/pricing'
+    | '/reseller'
+    | '/support'
+    | '/product/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BrowseRoute: typeof BrowseRoute
+  CategoriesRoute: typeof CategoriesRoute
+  HowItWorksRoute: typeof HowItWorksRoute
+  PricingRoute: typeof PricingRoute
+  ResellerRoute: typeof ResellerRoute
+  SupportRoute: typeof SupportRoute
+  ProductSlugRoute: typeof ProductSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +143,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/browse': {
+      id: '/browse'
+      path: '/browse'
+      fullPath: '/browse'
+      preLoaderRoute: typeof BrowseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categories': {
+      id: '/categories'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof CategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reseller': {
+      id: '/reseller'
+      path: '/reseller'
+      fullPath: '/reseller'
+      preLoaderRoute: typeof ResellerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product/$slug': {
+      id: '/product/$slug'
+      path: '/product/$slug'
+      fullPath: '/product/$slug'
+      preLoaderRoute: typeof ProductSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BrowseRoute: BrowseRoute,
+  CategoriesRoute: CategoriesRoute,
+  HowItWorksRoute: HowItWorksRoute,
+  PricingRoute: PricingRoute,
+  ResellerRoute: ResellerRoute,
+  SupportRoute: SupportRoute,
+  ProductSlugRoute: ProductSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
