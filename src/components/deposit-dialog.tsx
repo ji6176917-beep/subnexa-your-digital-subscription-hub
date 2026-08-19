@@ -308,7 +308,7 @@ export function DepositDialog() {
                 amount: Number(value.toFixed(2)),
                 ...(method === "bdt" ? { bdtAmount: bdtTotal, rate: rateNum, senderPhone: senderPhone.trim() } : {}),
                 reference: reference.trim(),
-                note: note.trim() || undefined,
+                ...(note.trim() ? { note: note.trim() } : {}),
               });
               reset();
               closeDeposit();
