@@ -124,7 +124,16 @@ export function SiteHeader() {
                     {item.label}
                   </Link>
                 ))}
-                <Button asChild className="mt-3" onClick={() => setOpen(false)}>
+                <Button
+                  className="mt-3 gap-2"
+                  onClick={() => {
+                    setOpen(false);
+                    openDeposit();
+                  }}
+                >
+                  <Wallet className="size-4" /> Wallet · {shown}
+                </Button>
+                <Button asChild variant="secondary" onClick={() => setOpen(false)}>
                   <Link to="/browse">Get started</Link>
                 </Button>
                 <Button asChild variant="outline" onClick={() => setOpen(false)}>
