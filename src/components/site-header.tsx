@@ -25,6 +25,9 @@ const nav = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const { balance, hydrated, openDeposit } = useWallet();
+  const shown = hydrated ? formatUSD(balance) : "$0.00";
+
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
