@@ -62,6 +62,34 @@ function ProductPage() {
   const [selected, setSelected] = useState(plans[0]?.key ?? null);
   const active = plans.find((p) => p.key === selected);
   const related = relatedProducts(product);
+  const { balance, hydrated, charge, openDeposit } = useWallet();
+
+  const handleBuy = () => {
+    if (!active) {
+      toast.info("Quote requested", {
+        description: `Our team will quote ${product.name} for you.`,
+      });
+      return;
+    }
+    if (!hydrated) return;
+    if (balance + 1e-9 < active.price) {
+      const shortfall = Number((active.price - balance).toFixed(2));
+      toast.error("Insufficient wallet balance", {
+        description: `You need ${formatUSD(shortfall)} more. Add funds to continue.`,
+      });
+      openDeposit(shortfall);
+      return;
+    }
+    const ok = charge(active.price, `${product.name} · ${active.label}`);
+    if (!ok) {
+      openDeposit(Number((active.price - balance).toFixed(2)));
+      return;
+    }
+    toast.success("Order confirmed", {
+      description: `${product.name} · ${active.label} · ${formatUSD(active.price)} paid from wallet. Delivery details arrive shortly.`,
+    });
+  };
+
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
