@@ -1,9 +1,19 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, Search, Sparkles } from "lucide-react";
+import { Menu, Plus, Search, Sparkles, User, Wallet } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { formatUSD } from "@/lib/catalog";
+import { useWallet } from "@/lib/wallet";
 
 const nav = [
   { to: "/browse", label: "Browse" },
