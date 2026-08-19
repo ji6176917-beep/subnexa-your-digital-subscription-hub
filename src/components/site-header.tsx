@@ -59,12 +59,50 @@ export function SiteHeader() {
             </Link>
           </Button>
           <ThemeToggle />
-          <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex">
-            <Link to="/reseller">Become a reseller</Link>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => openDeposit()}
+            className="gap-2"
+            aria-label={`Wallet balance ${shown}. Add funds`}
+          >
+            <Wallet className="size-4 text-primary" />
+            <span className="font-semibold">{shown}</span>
+            <span className="hidden sm:inline text-muted-foreground">· Deposit</span>
           </Button>
-          <Button asChild size="sm" className="hidden sm:inline-flex">
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label="Account menu">
+                <User className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel className="flex items-center justify-between">
+                <span>Wallet</span>
+                <span className="font-bold text-primary">{shown}</span>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => openDeposit()}>
+                <Plus className="size-4" /> Add funds
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/browse">Browse subscriptions</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/reseller">Become a reseller</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/support">Support</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Button asChild size="sm" className="hidden lg:inline-flex">
             <Link to="/browse">Get started</Link>
           </Button>
+
 
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
