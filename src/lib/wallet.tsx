@@ -61,7 +61,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       transactions: [
         {
           id: crypto.randomUUID(),
-          type: "deposit",
+          type: "deposit" as const,
           label: `Deposit via ${method}`,
           amount,
           at: new Date().toISOString(),
@@ -79,7 +79,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       return {
         balance: Number((s.balance - amount).toFixed(2)),
         transactions: [
-          { id: crypto.randomUUID(), type: "purchase", label, amount, at: new Date().toISOString() },
+          { id: crypto.randomUUID(), type: "purchase" as const, label, amount, at: new Date().toISOString() },
           ...s.transactions,
         ].slice(0, 50),
       };
