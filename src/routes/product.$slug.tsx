@@ -12,6 +12,7 @@ import {
   relatedProducts,
   type Product,
 } from "@/lib/catalog";
+import { useWallet } from "@/lib/wallet";
 
 export const Route = createFileRoute("/product/$slug")({
   loader: ({ params }) => {
@@ -61,6 +62,34 @@ function ProductPage() {
   const [selected, setSelected] = useState(plans[0]?.key ?? null);
   const active = plans.find((p) => p.key === selected);
   const related = relatedProducts(product);
+  const { balance, hydrated, charge, openDeposit } = useWallet();
+
+  const handleBuy = () => {
+    if (!active) {
+      toast.info("Quote requested", {
+        description: `Our team will quote ${product.name} for you.`,
+      });
+      return;
+    }
+    if (!hydrated) return;
+    if (balance + 1e-9 < active.price) {
+      const shortfall = Number((active.price - balance).toFixed(2));
+      toast.error("Insufficient wallet balance", {
+        description: `You need ${formatUSD(shortfall)} more. Add funds to continue.`,
+      });
+      openDeposit(shortfall);
+      return;
+    }
+    const ok = charge(active.price, `${product.name} · ${active.label}`);
+    if (!ok) {
+      openDeposit(Number((active.price - balance).toFixed(2)));
+      return;
+    }
+    toast.success("Order confirmed", {
+      description: `${product.name} · ${active.label} · ${formatUSD(active.price)} paid from wallet. Delivery details arrive shortly.`,
+    });
+  };
+
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
@@ -167,18 +196,21 @@ function ProductPage() {
               </span>
             </div>
 
-            <Button
-              className="mt-5 w-full"
-              size="lg"
-              onClick={() =>
-                toast.success("Order started", {
-                  description: active
-                    ? `${product.name} · ${active.label} · ${formatUSD(active.price)}. Checkout goes live with the payment integration.`
-                    : `Our team will quote ${product.name} for you.`,
-                })
-              }
-            >
+            <div className="mt-3 flex items-center justify-between rounded-lg bg-secondary/60 px-3 py-2 text-xs">
+              <span className="text-muted-foreground">Wallet balance</span>
+              <span className="font-semibold">{hydrated ? formatUSD(balance) : "—"}</span>
+            </div>
+            {active && hydrated && balance + 1e-9 < active.price && (
+              <p className="mt-2 text-xs text-destructive">
+                Add {formatUSD(active.price - balance)} to your wallet to complete this order.
+              </p>
+            )}
+
+            <Button className="mt-4 w-full" size="lg" onClick={handleBuy}>
               Buy now
+            </Button>
+            <Button variant="secondary" className="mt-3 w-full" onClick={() => openDeposit()}>
+              Add funds to wallet
             </Button>
             <Button asChild variant="outline" className="mt-3 w-full">
               <a href="https://t.me/subnexa" target="_blank" rel="noreferrer">

@@ -1,9 +1,19 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, Search, Sparkles } from "lucide-react";
+import { Menu, Plus, Search, Sparkles, User, Wallet } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { formatUSD } from "@/lib/catalog";
+import { useWallet } from "@/lib/wallet";
 
 const nav = [
   { to: "/browse", label: "Browse" },
@@ -15,6 +25,9 @@ const nav = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const { balance, hydrated, openDeposit } = useWallet();
+  const shown = hydrated ? formatUSD(balance) : "$0.00";
+
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
@@ -46,12 +59,50 @@ export function SiteHeader() {
             </Link>
           </Button>
           <ThemeToggle />
-          <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex">
-            <Link to="/reseller">Become a reseller</Link>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => openDeposit()}
+            className="gap-2"
+            aria-label={`Wallet balance ${shown}. Add funds`}
+          >
+            <Wallet className="size-4 text-primary" />
+            <span className="font-semibold">{shown}</span>
+            <span className="hidden sm:inline text-muted-foreground">· Deposit</span>
           </Button>
-          <Button asChild size="sm" className="hidden sm:inline-flex">
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label="Account menu">
+                <User className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel className="flex items-center justify-between">
+                <span>Wallet</span>
+                <span className="font-bold text-primary">{shown}</span>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => openDeposit()}>
+                <Plus className="size-4" /> Add funds
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/browse">Browse subscriptions</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/reseller">Become a reseller</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/support">Support</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Button asChild size="sm" className="hidden lg:inline-flex">
             <Link to="/browse">Get started</Link>
           </Button>
+
 
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
@@ -73,7 +124,16 @@ export function SiteHeader() {
                     {item.label}
                   </Link>
                 ))}
-                <Button asChild className="mt-3" onClick={() => setOpen(false)}>
+                <Button
+                  className="mt-3 gap-2"
+                  onClick={() => {
+                    setOpen(false);
+                    openDeposit();
+                  }}
+                >
+                  <Wallet className="size-4" /> Wallet · {shown}
+                </Button>
+                <Button asChild variant="secondary" onClick={() => setOpen(false)}>
                   <Link to="/browse">Get started</Link>
                 </Button>
                 <Button asChild variant="outline" onClick={() => setOpen(false)}>
