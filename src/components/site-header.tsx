@@ -96,6 +96,10 @@ export function SiteHeader() {
               <DropdownMenuItem asChild>
                 <Link to="/support">Support</Link>
               </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link to="/admin">Admin · deposit approvals</Link>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
