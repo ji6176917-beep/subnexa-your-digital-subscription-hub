@@ -12,6 +12,7 @@ import {
   relatedProducts,
   type Product,
 } from "@/lib/catalog";
+import { useWallet } from "@/lib/wallet";
 
 export const Route = createFileRoute("/product/$slug")({
   loader: ({ params }) => {
