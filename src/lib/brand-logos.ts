@@ -1,3 +1,5 @@
+import verified from "@/data/brand-logos.json";
+
 // Maps a product name to a Simple Icons slug (https://cdn.simpleicons.org/<slug>).
 // Falls back to a generated slug, and the UI falls back to initials if the icon 404s.
 
@@ -196,6 +198,62 @@ export function brandLogoUrl(name: string): string {
   return `https://cdn.simpleicons.org/${brandSlug(name)}`;
 }
 
+// Some brands were removed from Simple Icons; fall back to the site favicon.
+const domainOverrides: Record<string, string> = {
+  openai: "openai.com",
+  claude: "claude.ai",
+  googlegemini: "gemini.google.com",
+  githubcopilot: "copilot.microsoft.com",
+  perplexity: "perplexity.ai",
+  x: "x.com",
+  character: "character.ai",
+  characterai: "character.ai",
+  you: "you.com",
+  mistralai: "mistral.ai",
+  capcut: "capcut.com",
+  microsoftoffice: "microsoft.com",
+  microsoft365: "microsoft.com",
+  microsoftonedrive: "onedrive.live.com",
+  googlenotebooklm: "notebooklm.google.com",
+  googleone: "one.google.com",
+  googledrive: "drive.google.com",
+  removedotbg: "remove.bg",
+  wondersharefilmora: "filmora.wondershare.com",
+  primevideo: "primevideo.com",
+  disneyplus: "disneyplus.com",
+  applemusic: "music.apple.com",
+  youtubemusic: "music.youtube.com",
+  brilliant: "brilliant.org",
+  copyai: "copy.ai",
+  otter: "otter.ai",
+  fireflies: "fireflies.ai",
+  stabilityai: "stability.ai",
+  huggingface: "huggingface.co",
+  elevenlabs: "elevenlabs.io",
+  runway: "runwayml.com",
+  midjourney: "midjourney.com",
+  jetbrains: "jetbrains.com",
+  finalcutpro: "apple.com",
+  davinciresolve: "blackmagicdesign.com",
+};
+
+const favicon = (domain: string) => `https://icons.duckduckgo.com/ip3/${domain}.ico`;
+
+/** Ordered logo candidates: official icon set first, then brand favicons. */
+export function brandLogoCandidates(name: string): string[] {
+  const slug = brandSlug(name);
+  const known = domainOverrides[slug];
+  const domains = known ? [known] : [`${slug}.com`, `${slug}.ai`, `${slug}.io`];
+  return [brandLogoUrl(name), ...domains.map(favicon)];
+}
+
 export function brandInitials(name: string): string {
   return name.slice(0, 2).toUpperCase();
+}
+
+const verifiedLogos = verified as Record<string, string>;
+
+/** Verified logo URL for a product slug (build-time checked), or null. */
+export function brandLogoFor(productSlug: string): string | null {
+  return verifiedLogos[productSlug] ?? null;
 }

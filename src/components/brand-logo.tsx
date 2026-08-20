@@ -1,16 +1,19 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { brandInitials, brandLogoUrl } from "@/lib/brand-logos";
+import { brandInitials, brandLogoFor } from "@/lib/brand-logos";
 
 type Props = {
   name: string;
+  /** product slug — used to look up the verified logo URL */
+  slug: string;
   /** rendered logo size in px */
   size?: number;
   className?: string;
 };
 
-export function BrandLogo({ name, size = 32, className }: Props) {
+export function BrandLogo({ name, slug, size = 32, className }: Props) {
   const [failed, setFailed] = useState(false);
+  const src = brandLogoFor(slug);
   const box = Math.round(size * 1.4);
 
   return (
@@ -21,16 +24,9 @@ export function BrandLogo({ name, size = 32, className }: Props) {
       )}
       style={{ width: box, height: box }}
     >
-      {failed ? (
-        <span
-          className="bg-gradient-primary flex size-full items-center justify-center font-bold text-primary-foreground"
-          style={{ fontSize: Math.round(size * 0.44) }}
-        >
-          {brandInitials(name)}
-        </span>
-      ) : (
+      {src && !failed ? (
         <img
-          src={brandLogoUrl(name)}
+          src={src}
           alt={`${name} logo`}
           width={size}
           height={size}
@@ -38,8 +34,15 @@ export function BrandLogo({ name, size = 32, className }: Props) {
           decoding="async"
           onError={() => setFailed(true)}
           style={{ width: size, height: size }}
-          className="object-contain dark:brightness-125"
+          className="object-contain"
         />
+      ) : (
+        <span
+          className="bg-gradient-primary flex size-full items-center justify-center font-bold text-primary-foreground"
+          style={{ fontSize: Math.round(size * 0.44) }}
+        >
+          {brandInitials(name)}
+        </span>
       )}
     </span>
   );
