@@ -1,29 +1,20 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { brandInitials, brandLogoCandidates } from "@/lib/brand-logos";
+import { brandInitials, brandLogoFor } from "@/lib/brand-logos";
 
 type Props = {
   name: string;
+  /** product slug — used to look up the verified logo URL */
+  slug: string;
   /** rendered logo size in px */
   size?: number;
   className?: string;
 };
 
-export function BrandLogo({ name, size = 32, className }: Props) {
-  const candidates = brandLogoCandidates(name);
-  const [index, setIndex] = useState(0);
-  const imgRef = useRef<HTMLImageElement>(null);
-  const src = candidates[index];
+export function BrandLogo({ name, slug, size = 32, className }: Props) {
+  const [failed, setFailed] = useState(false);
+  const src = brandLogoFor(slug);
   const box = Math.round(size * 1.4);
-
-  const next = () => setIndex((i) => i + 1);
-
-  // Errors that happen before hydration never reach React's onError, so
-  // re-check the decoded image once mounted.
-  useEffect(() => {
-    const img = imgRef.current;
-    if (img && img.complete && img.naturalWidth === 0) next();
-  }, [src]);
 
   return (
     <span
@@ -33,16 +24,15 @@ export function BrandLogo({ name, size = 32, className }: Props) {
       )}
       style={{ width: box, height: box }}
     >
-      {src ? (
+      {src && !failed ? (
         <img
-          key={src}
-          ref={imgRef}
           src={src}
           alt={`${name} logo`}
           width={size}
           height={size}
+          loading="lazy"
           decoding="async"
-          onError={next}
+          onError={() => setFailed(true)}
           style={{ width: size, height: size }}
           className="object-contain"
         />
