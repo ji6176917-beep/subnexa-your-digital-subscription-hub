@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/brand-logo";
 import { ProductCard } from "@/components/product-card";
 import {
   availablePlans,
@@ -104,9 +105,7 @@ function ProductPage() {
       <div className="mt-6 grid gap-10 lg:grid-cols-[1.2fr_1fr]">
         <div>
           <div className="flex items-start gap-4">
-            <span className="bg-gradient-primary flex size-16 shrink-0 items-center justify-center rounded-xl text-xl font-bold text-primary-foreground">
-              {product.name.slice(0, 2).toUpperCase()}
-            </span>
+            <BrandLogo name={product.name} size={40} className="rounded-2xl" />
             <div>
               <Badge variant="secondary">{product.category}</Badge>
               <h1 className="mt-2 text-3xl font-bold sm:text-4xl">{product.name}</h1>
