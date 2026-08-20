@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { brandInitials, brandLogoCandidates } from "@/lib/brand-logos";
 
@@ -12,8 +12,18 @@ type Props = {
 export function BrandLogo({ name, size = 32, className }: Props) {
   const candidates = brandLogoCandidates(name);
   const [index, setIndex] = useState(0);
+  const imgRef = useRef<HTMLImageElement>(null);
   const src = candidates[index];
   const box = Math.round(size * 1.4);
+
+  const next = () => setIndex((i) => i + 1);
+
+  // Errors that happen before hydration never reach React's onError, so
+  // re-check the decoded image once mounted.
+  useEffect(() => {
+    const img = imgRef.current;
+    if (img && img.complete && img.naturalWidth === 0) next();
+  }, [src]);
 
   return (
     <span
@@ -26,13 +36,13 @@ export function BrandLogo({ name, size = 32, className }: Props) {
       {src ? (
         <img
           key={src}
+          ref={imgRef}
           src={src}
           alt={`${name} logo`}
           width={size}
           height={size}
-          loading="lazy"
           decoding="async"
-          onError={() => setIndex((i) => i + 1)}
+          onError={next}
           style={{ width: size, height: size }}
           className="object-contain"
         />
