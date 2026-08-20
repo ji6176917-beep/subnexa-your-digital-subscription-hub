@@ -235,10 +235,14 @@ const domainOverrides: Record<string, string> = {
   davinciresolve: "blackmagicdesign.com",
 };
 
-export function brandFallbackLogoUrl(name: string): string {
+const favicon = (domain: string) => `https://icons.duckduckgo.com/ip3/${domain}.ico`;
+
+/** Ordered logo candidates: official icon set first, then brand favicons. */
+export function brandLogoCandidates(name: string): string[] {
   const slug = brandSlug(name);
-  const domain = domainOverrides[slug] ?? `${slug}.com`;
-  return `https://icons.duckduckgo.com/ip3/${domain}.ico`;
+  const known = domainOverrides[slug];
+  const domains = known ? [known] : [`${slug}.com`, `${slug}.ai`, `${slug}.io`];
+  return [brandLogoUrl(name), ...domains.map(favicon)];
 }
 
 export function brandInitials(name: string): string {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { brandFallbackLogoUrl, brandInitials, brandLogoUrl } from "@/lib/brand-logos";
+import { brandInitials, brandLogoCandidates } from "@/lib/brand-logos";
 
 type Props = {
   name: string;
@@ -10,8 +10,9 @@ type Props = {
 };
 
 export function BrandLogo({ name, size = 32, className }: Props) {
-  const [stage, setStage] = useState<0 | 1 | 2>(0);
-  const failed = stage === 2;
+  const candidates = brandLogoCandidates(name);
+  const [index, setIndex] = useState(0);
+  const src = candidates[index];
   const box = Math.round(size * 1.4);
 
   return (
@@ -22,26 +23,26 @@ export function BrandLogo({ name, size = 32, className }: Props) {
       )}
       style={{ width: box, height: box }}
     >
-      {failed ? (
+      {src ? (
+        <img
+          key={src}
+          src={src}
+          alt={`${name} logo`}
+          width={size}
+          height={size}
+          loading="lazy"
+          decoding="async"
+          onError={() => setIndex((i) => i + 1)}
+          style={{ width: size, height: size }}
+          className="object-contain"
+        />
+      ) : (
         <span
           className="bg-gradient-primary flex size-full items-center justify-center font-bold text-primary-foreground"
           style={{ fontSize: Math.round(size * 0.44) }}
         >
           {brandInitials(name)}
         </span>
-      ) : (
-        <img
-          key={stage}
-          src={stage === 0 ? brandLogoUrl(name) : brandFallbackLogoUrl(name)}
-          alt={`${name} logo`}
-          width={size}
-          height={size}
-          loading="lazy"
-          decoding="async"
-          onError={() => setStage((s) => (s === 0 ? 1 : 2))}
-          style={{ width: size, height: size }}
-          className="object-contain dark:brightness-125"
-        />
       )}
     </span>
   );
