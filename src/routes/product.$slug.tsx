@@ -105,7 +105,7 @@ function ProductPage() {
       <div className="mt-6 grid gap-10 lg:grid-cols-[1.2fr_1fr]">
         <div>
           <div className="flex items-start gap-4">
-            <BrandLogo name={product.name} size={40} className="rounded-2xl" />
+            <BrandLogo name={product.name} slug={product.slug} size={40} className="rounded-2xl" />
             <div>
               <Badge variant="secondary">{product.category}</Badge>
               <h1 className="mt-2 text-3xl font-bold sm:text-4xl">{product.name}</h1>

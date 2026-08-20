@@ -1,3 +1,5 @@
+import verified from "@/data/brand-logos.json";
+
 // Maps a product name to a Simple Icons slug (https://cdn.simpleicons.org/<slug>).
 // Falls back to a generated slug, and the UI falls back to initials if the icon 404s.
 
@@ -247,4 +249,11 @@ export function brandLogoCandidates(name: string): string[] {
 
 export function brandInitials(name: string): string {
   return name.slice(0, 2).toUpperCase();
+}
+
+const verifiedLogos = verified as Record<string, string>;
+
+/** Verified logo URL for a product slug (build-time checked), or null. */
+export function brandLogoFor(productSlug: string): string | null {
+  return verifiedLogos[productSlug] ?? null;
 }
