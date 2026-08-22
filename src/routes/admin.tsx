@@ -117,7 +117,7 @@ function StatusBadge({ status }: { status: DepositRequest["status"] }) {
   return <Badge variant="secondary">Pending</Badge>;
 }
 
-function AdminPage() {
+function AdminPage({ onLock }: { onLock: () => void }) {
   const { requests, hydrated, balance, approveRequest, rejectRequest } = useWallet();
   const pending = requests.filter((r) => r.status === "pending");
   const history = requests.filter((r) => r.status !== "pending");
@@ -134,9 +134,14 @@ function AdminPage() {
             Verify transaction details, then approve to credit the wallet instantly.
           </p>
         </div>
-        <div className="rounded-xl border border-border/70 bg-card px-5 py-3">
-          <p className="text-xs text-muted-foreground">Wallet balance</p>
-          <p className="text-2xl font-bold">{hydrated ? formatUSD(balance) : "—"}</p>
+        <div className="flex items-center gap-3">
+          <div className="rounded-xl border border-border/70 bg-card px-5 py-3">
+            <p className="text-xs text-muted-foreground">Wallet balance</p>
+            <p className="text-2xl font-bold">{hydrated ? formatUSD(balance) : "—"}</p>
+          </div>
+          <Button variant="outline" size="sm" onClick={onLock}>
+            <Lock className="size-4" /> Lock
+          </Button>
         </div>
       </div>
 
