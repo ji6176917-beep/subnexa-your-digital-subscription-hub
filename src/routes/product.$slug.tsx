@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { BrandLogo } from "@/components/brand-logo";
 import { ProductCard } from "@/components/product-card";
 import { availablePlans, formatUSD, getProduct } from "@/lib/catalog";
-import { useCatalog } from "@/lib/catalog-store";
+import { useCatalog, type EditableProduct } from "@/lib/catalog-store";
 import { useWallet } from "@/lib/wallet";
 
 export const Route = createFileRoute("/product/$slug")({
@@ -64,8 +64,8 @@ function ProductPage() {
 }
 
 type ProductViewProps = {
-  product: ReturnType<ReturnType<typeof useCatalog>["getProduct"]> & object;
-  related: ReturnType<ReturnType<typeof useCatalog>["relatedProducts"]>;
+  product: EditableProduct;
+  related: EditableProduct[];
   wallet: Pick<ReturnType<typeof useWallet>, "balance" | "hydrated" | "charge" | "openDeposit">;
 };
 
