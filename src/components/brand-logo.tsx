@@ -7,7 +7,7 @@ type Props = {
   /** product slug — used to look up the verified logo URL */
   slug: string;
   /** explicit logo URL override (admin-managed products) */
-  logoUrl?: string | null;
+  logoUrl?: string | null | undefined;
   /** rendered logo size in px */
   size?: number;
   className?: string;
