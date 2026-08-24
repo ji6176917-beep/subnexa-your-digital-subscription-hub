@@ -217,19 +217,31 @@ export function DepositDialog() {
             {method === "bdt" && (
               <>
                 <div className="grid gap-2 sm:grid-cols-2">
-                  <div>
-                    <Label htmlFor="bdt-rate" className="text-xs">
-                      Exchange rate (BDT per $1)
-                    </Label>
-                    <Input
-                      id="bdt-rate"
-                      type="number"
-                      min={1}
-                      step="0.5"
-                      value={rate}
-                      onChange={(e) => setRate(e.target.value)}
-                      className="mt-1"
-                    />
+                  {bdtProviders.map((p) => (
+                    <button
+                      key={p.key}
+                      type="button"
+                      onClick={() => setProvider(p.key)}
+                      className={`rounded-lg border px-3 py-2.5 text-left transition-colors ${
+                        provider === p.key
+                          ? "border-primary bg-primary/10"
+                          : "border-border/70 hover:border-primary/40"
+                      }`}
+                    >
+                      <p className="text-sm font-semibold">{p.name}</p>
+                      <p className="text-[11px] text-muted-foreground">
+                        Fixed rate ৳{p.rate} per $1
+                      </p>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <div className="rounded-lg border border-border/70 bg-card px-3 py-2">
+                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                      Exchange rate (locked)
+                    </p>
+                    <p className="text-lg font-bold">৳{activeProvider.rate} = $1.00</p>
                   </div>
                   <div className="rounded-lg border border-primary/40 bg-primary/10 px-3 py-2">
                     <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
@@ -239,15 +251,19 @@ export function DepositDialog() {
                       {bdtTotal ? `৳${bdtTotal.toLocaleString()}` : "—"}
                     </p>
                     <p className="text-[11px] text-muted-foreground">
-                      {amountValid ? `${formatUSD(value)} × ${rateValid ? rateNum : "—"}` : "Enter a valid amount"}
+                      {amountValid
+                        ? `${formatUSD(value)} × ${activeProvider.rate}`
+                        : "Enter a valid amount"}
                     </p>
                   </div>
                 </div>
-                <CopyField label="bKash personal (Send Money & Cash In)" value="01761742529" />
-                <CopyField label="Nagad (Cash In ONLY)" value="01850667811" />
-                <p className="text-xs text-destructive">
-                  Note: Send Money is NOT supported for Nagad — use Cash In only.
-                </p>
+
+                <CopyField label={activeProvider.numberLabel} value={activeProvider.number} />
+                {provider === "nagad" && (
+                  <p className="text-xs text-destructive">
+                    Note: Send Money is NOT supported for Nagad — use Cash In only.
+                  </p>
+                )}
               </>
             )}
           </div>
