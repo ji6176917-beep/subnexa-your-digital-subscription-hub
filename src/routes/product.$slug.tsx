@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, BadgeCheck, Clock, MessageCircle, ShieldCheck, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -6,23 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BrandLogo } from "@/components/brand-logo";
 import { ProductCard } from "@/components/product-card";
-import {
-  availablePlans,
-  formatUSD,
-  getProduct,
-  relatedProducts,
-  type Product,
-} from "@/lib/catalog";
+import { availablePlans, formatUSD, getProduct } from "@/lib/catalog";
+import { useCatalog, type EditableProduct } from "@/lib/catalog-store";
 import { useWallet } from "@/lib/wallet";
 
 export const Route = createFileRoute("/product/$slug")({
-  loader: ({ params }) => {
-    const product = getProduct(params.slug);
-    if (!product) throw notFound();
-    return { product };
-  },
+  loader: ({ params }) => ({ product: getProduct(params.slug) ?? null }),
   head: ({ loaderData }) => {
-    if (!loaderData) {
+    if (!loaderData?.product) {
       return {
         meta: [{ title: "Product not found — SubNexa" }, { name: "robots", content: "noindex" }],
       };
@@ -58,12 +49,31 @@ function ProductNotFound() {
 }
 
 function ProductPage() {
-  const { product } = Route.useLoaderData() as { product: Product };
+  const { slug } = Route.useParams();
+  const { getProduct: lookup, relatedProducts, hydrated: catalogReady } = useCatalog();
+  const product = lookup(slug);
+  const { balance, hydrated, charge, openDeposit } = useWallet();
+  if (!product) return catalogReady ? <ProductNotFound /> : null;
+  return (
+    <ProductView
+      product={product}
+      related={relatedProducts(product)}
+      wallet={{ balance, hydrated, charge, openDeposit }}
+    />
+  );
+}
+
+type ProductViewProps = {
+  product: EditableProduct;
+  related: EditableProduct[];
+  wallet: Pick<ReturnType<typeof useWallet>, "balance" | "hydrated" | "charge" | "openDeposit">;
+};
+
+function ProductView({ product, related, wallet }: ProductViewProps) {
+  const { balance, hydrated, charge, openDeposit } = wallet;
   const plans = availablePlans(product);
   const [selected, setSelected] = useState(plans[0]?.key ?? null);
   const active = plans.find((p) => p.key === selected);
-  const related = relatedProducts(product);
-  const { balance, hydrated, charge, openDeposit } = useWallet();
 
   const handleBuy = () => {
     if (!active) {
@@ -105,7 +115,7 @@ function ProductPage() {
       <div className="mt-6 grid gap-10 lg:grid-cols-[1.2fr_1fr]">
         <div>
           <div className="flex items-start gap-4">
-            <BrandLogo name={product.name} slug={product.slug} size={40} className="rounded-2xl" />
+            <BrandLogo name={product.name} slug={product.slug} logoUrl={product.logoUrl} size={40} className="rounded-2xl" />
             <div>
               <Badge variant="secondary">{product.category}</Badge>
               <h1 className="mt-2 text-3xl font-bold sm:text-4xl">{product.name}</h1>
@@ -113,9 +123,9 @@ function ProductPage() {
           </div>
 
           <p className="mt-6 text-muted-foreground">
-            Genuine {product.name} premium access sourced directly and delivered to you after
+            {product.description ? product.description : <>Genuine {product.name} premium access sourced directly and delivered to you after
             checkout. Choose the term that fits your workflow — longer plans carry the lowest
-            effective monthly cost.
+            effective monthly cost.</>}
           </p>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-3">

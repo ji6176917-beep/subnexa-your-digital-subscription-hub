@@ -6,14 +6,16 @@ type Props = {
   name: string;
   /** product slug — used to look up the verified logo URL */
   slug: string;
+  /** explicit logo URL override (admin-managed products) */
+  logoUrl?: string | null | undefined;
   /** rendered logo size in px */
   size?: number;
   className?: string;
 };
 
-export function BrandLogo({ name, slug, size = 32, className }: Props) {
+export function BrandLogo({ name, slug, logoUrl, size = 32, className }: Props) {
   const [failed, setFailed] = useState(false);
-  const src = brandLogoFor(slug);
+  const src = logoUrl || brandLogoFor(slug);
   const box = Math.round(size * 1.4);
 
   return (

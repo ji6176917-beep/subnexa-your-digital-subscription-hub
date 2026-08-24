@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ProductCard } from "@/components/product-card";
-import { categories, searchProducts, startingPrice, totalProducts } from "@/lib/catalog";
+import { startingPrice } from "@/lib/catalog";
+import { useCatalog } from "@/lib/catalog-store";
 
 const title = "Browse Premium Subscriptions — SubNexa";
 const description =
@@ -42,6 +43,8 @@ function BrowsePage() {
   const navigate = useNavigate({ from: "/browse" });
   const [sort, setSort] = useState<(typeof sorts)[number]["key"]>("popular");
   const [visible, setVisible] = useState(24);
+  const { products, categories, searchProducts } = useCatalog();
+  const totalProducts = products.length;
 
   const results = useMemo(() => {
     const list = [...searchProducts(q, category)];
@@ -51,7 +54,7 @@ function BrowsePage() {
     if (sort === "price-desc")
       list.sort((a, b) => (startingPrice(b) ?? -1) - (startingPrice(a) ?? -1));
     return list;
-  }, [q, category, sort]);
+  }, [q, category, sort, searchProducts]);
 
   function setSearch(next: Partial<{ q: string; category: string }>) {
     setVisible(24);

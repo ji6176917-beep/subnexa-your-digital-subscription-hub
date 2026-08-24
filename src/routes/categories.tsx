@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import { categories, products, startingPrice, formatUSD } from "@/lib/catalog";
+import { startingPrice, formatUSD } from "@/lib/catalog";
+import { useCatalog } from "@/lib/catalog-store";
 
 const title = "All Subscription Categories — SubNexa";
 const description =
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/categories")({
 });
 
 function CategoriesPage() {
+  const { products, categories } = useCatalog();
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
       <header className="max-w-2xl">

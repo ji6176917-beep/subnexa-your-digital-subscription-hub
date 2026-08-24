@@ -68,7 +68,25 @@ const methods: MethodDef[] = [
 ];
 
 const presets = [3, 10, 25, 50];
-const DEFAULT_RATE = 125;
+
+type BdtProvider = "bkash" | "nagad";
+
+const bdtProviders = [
+  {
+    key: "bkash" as const,
+    name: "bKash",
+    rate: 123,
+    number: "01761742529",
+    numberLabel: "bKash personal (Send Money & Cash In)",
+  },
+  {
+    key: "nagad" as const,
+    name: "Nagad",
+    rate: 130,
+    number: "01850667811",
+    numberLabel: "Nagad (Cash In ONLY)",
+  },
+];
 
 function CopyField({ label, value }: { label: string; value: string }) {
   const [copied, setCopied] = useState(false);
@@ -105,7 +123,7 @@ export function DepositDialog() {
   const { depositOpen, closeDeposit, requiredAmount, balance, submitDeposit } = useWallet();
   const [amount, setAmount] = useState("10");
   const [method, setMethod] = useState<DepositMethod>("binance");
-  const [rate, setRate] = useState(String(DEFAULT_RATE));
+  const [provider, setProvider] = useState<BdtProvider>("bkash");
   const [reference, setReference] = useState("");
   const [senderPhone, setSenderPhone] = useState("");
   const [note, setNote] = useState("");
@@ -118,17 +136,17 @@ export function DepositDialog() {
 
   const value = Number(amount);
   const amountValid = Number.isFinite(value) && value >= MIN_DEPOSIT;
-  const rateNum = Number(rate);
-  const rateValid = Number.isFinite(rateNum) && rateNum > 0;
+  const activeProvider = bdtProviders.find((p) => p.key === provider)!;
+  const rateNum = activeProvider.rate;
   const bdtTotal = useMemo(
-    () => (amountValid && rateValid ? Math.ceil(value * rateNum) : 0),
-    [amountValid, rateValid, value, rateNum],
+    () => (amountValid ? Math.ceil(value * rateNum) : 0),
+    [amountValid, value, rateNum],
   );
 
   const active = methods.find((m) => m.key === method)!;
   const refValid = reference.trim().length >= 4;
   const phoneValid = method !== "bdt" || /^01\d{9}$/.test(senderPhone.trim());
-  const canSubmit = amountValid && refValid && phoneValid && (method !== "bdt" || rateValid);
+  const canSubmit = amountValid && refValid && phoneValid;
 
   const reset = () => {
     setReference("");
@@ -217,19 +235,31 @@ export function DepositDialog() {
             {method === "bdt" && (
               <>
                 <div className="grid gap-2 sm:grid-cols-2">
-                  <div>
-                    <Label htmlFor="bdt-rate" className="text-xs">
-                      Exchange rate (BDT per $1)
-                    </Label>
-                    <Input
-                      id="bdt-rate"
-                      type="number"
-                      min={1}
-                      step="0.5"
-                      value={rate}
-                      onChange={(e) => setRate(e.target.value)}
-                      className="mt-1"
-                    />
+                  {bdtProviders.map((p) => (
+                    <button
+                      key={p.key}
+                      type="button"
+                      onClick={() => setProvider(p.key)}
+                      className={`rounded-lg border px-3 py-2.5 text-left transition-colors ${
+                        provider === p.key
+                          ? "border-primary bg-primary/10"
+                          : "border-border/70 hover:border-primary/40"
+                      }`}
+                    >
+                      <p className="text-sm font-semibold">{p.name}</p>
+                      <p className="text-[11px] text-muted-foreground">
+                        Fixed rate ৳{p.rate} per $1
+                      </p>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <div className="rounded-lg border border-border/70 bg-card px-3 py-2">
+                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                      Exchange rate (locked)
+                    </p>
+                    <p className="text-lg font-bold">৳{activeProvider.rate} = $1.00</p>
                   </div>
                   <div className="rounded-lg border border-primary/40 bg-primary/10 px-3 py-2">
                     <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
@@ -239,15 +269,19 @@ export function DepositDialog() {
                       {bdtTotal ? `৳${bdtTotal.toLocaleString()}` : "—"}
                     </p>
                     <p className="text-[11px] text-muted-foreground">
-                      {amountValid ? `${formatUSD(value)} × ${rateValid ? rateNum : "—"}` : "Enter a valid amount"}
+                      {amountValid
+                        ? `${formatUSD(value)} × ${activeProvider.rate}`
+                        : "Enter a valid amount"}
                     </p>
                   </div>
                 </div>
-                <CopyField label="bKash personal (Send Money & Cash In)" value="01761742529" />
-                <CopyField label="Nagad (Cash In ONLY)" value="01850667811" />
-                <p className="text-xs text-destructive">
-                  Note: Send Money is NOT supported for Nagad — use Cash In only.
-                </p>
+
+                <CopyField label={activeProvider.numberLabel} value={activeProvider.number} />
+                {provider === "nagad" && (
+                  <p className="text-xs text-destructive">
+                    Note: Send Money is NOT supported for Nagad — use Cash In only.
+                  </p>
+                )}
               </>
             )}
           </div>
@@ -304,9 +338,11 @@ export function DepositDialog() {
             onClick={() => {
               submitDeposit({
                 method,
-                methodLabel: active.name,
+                methodLabel: method === "bdt" ? `BDT P2P · ${activeProvider.name}` : active.name,
                 amount: Number(value.toFixed(2)),
-                ...(method === "bdt" ? { bdtAmount: bdtTotal, rate: rateNum, senderPhone: senderPhone.trim() } : {}),
+                ...(method === "bdt"
+                  ? { bdtAmount: bdtTotal, rate: rateNum, senderPhone: senderPhone.trim() }
+                  : {}),
                 reference: reference.trim(),
                 ...(note.trim() ? { note: note.trim() } : {}),
               });

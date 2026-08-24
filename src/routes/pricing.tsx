@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { categories, formatUSD, products, startingPrice } from "@/lib/catalog";
+import { formatUSD, startingPrice } from "@/lib/catalog";
+import { useCatalog } from "@/lib/catalog-store";
 
 const title = "Pricing & Plans — SubNexa";
 const description =
@@ -58,6 +59,7 @@ const tiers = [
 ];
 
 function PricingPage() {
+  const { products, categories } = useCatalog();
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
       <header className="max-w-2xl">
