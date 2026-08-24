@@ -14,7 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product-card";
-import { categories, products, totalProducts } from "@/lib/catalog";
+import { useCatalog } from "@/lib/catalog-store";
 
 const title = "SubNexa — Premium Subscription Marketplace";
 const description =
@@ -32,8 +32,7 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const featured = products.filter((p) =>
-  [
+const featuredSlugs = [
     "chatgpt-plus-5-6",
     "claude-plus-4-1",
     "perplexity-pro",
@@ -42,8 +41,7 @@ const featured = products.filter((p) =>
     "deepseek",
     "poe-pro",
     "gemini-pro",
-  ].includes(p.slug),
-);
+];
 
 const trustItems = [
   { icon: Timer, title: "Instant delivery", text: "Most orders are activated within minutes of payment confirmation." },
@@ -53,6 +51,9 @@ const trustItems = [
 ];
 
 export default function Index() {
+  const { products, categories } = useCatalog();
+  const totalProducts = products.length;
+  const featured = products.filter((p) => featuredSlugs.includes(p.slug)).slice(0, 8);
   return (
     <div>
       <section className="bg-hero-glow relative overflow-hidden border-b border-border/60">

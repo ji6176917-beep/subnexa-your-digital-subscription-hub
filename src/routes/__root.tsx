@@ -15,6 +15,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Toaster } from "@/components/ui/sonner";
 import { WalletProvider } from "@/lib/wallet";
+import { CatalogProvider } from "@/lib/catalog-store";
 import { DepositDialog } from "@/components/deposit-dialog";
 
 function NotFoundComponent() {
@@ -131,6 +132,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <CatalogProvider>
       <WalletProvider>
         <div className="flex min-h-screen flex-col">
           <SiteHeader />
@@ -143,6 +145,7 @@ function RootComponent() {
         <DepositDialog />
         <Toaster position="top-center" richColors />
       </WalletProvider>
+      </CatalogProvider>
     </QueryClientProvider>
   );
 }
