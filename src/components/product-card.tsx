@@ -2,9 +2,10 @@ import { Link } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { BrandLogo } from "@/components/brand-logo";
-import { availablePlans, formatUSD, startingPrice, type Product } from "@/lib/catalog";
+import { availablePlans, formatUSD, startingPrice } from "@/lib/catalog";
+import type { EditableProduct } from "@/lib/catalog-store";
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product }: { product: EditableProduct }) {
   const from = startingPrice(product);
   const plans = availablePlans(product);
 
@@ -15,7 +16,7 @@ export function ProductCard({ product }: { product: Product }) {
       className="group relative flex flex-col rounded-xl border border-border/70 bg-card p-5 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-elevated"
     >
       <div className="flex items-start gap-3">
-        <BrandLogo name={product.name} slug={product.slug} size={26} />
+        <BrandLogo name={product.name} slug={product.slug} logoUrl={product.logoUrl} size={26} />
         <div className="min-w-0">
           <h3 className="truncate text-base font-semibold">{product.name}</h3>
           <p className="truncate text-xs text-muted-foreground">{product.category}</p>
