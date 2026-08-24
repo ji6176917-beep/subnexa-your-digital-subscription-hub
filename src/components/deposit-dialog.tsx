@@ -68,7 +68,25 @@ const methods: MethodDef[] = [
 ];
 
 const presets = [3, 10, 25, 50];
-const DEFAULT_RATE = 125;
+
+type BdtProvider = "bkash" | "nagad";
+
+const bdtProviders = [
+  {
+    key: "bkash" as const,
+    name: "bKash",
+    rate: 123,
+    number: "01761742529",
+    numberLabel: "bKash personal (Send Money & Cash In)",
+  },
+  {
+    key: "nagad" as const,
+    name: "Nagad",
+    rate: 130,
+    number: "01850667811",
+    numberLabel: "Nagad (Cash In ONLY)",
+  },
+];
 
 function CopyField({ label, value }: { label: string; value: string }) {
   const [copied, setCopied] = useState(false);
@@ -105,7 +123,7 @@ export function DepositDialog() {
   const { depositOpen, closeDeposit, requiredAmount, balance, submitDeposit } = useWallet();
   const [amount, setAmount] = useState("10");
   const [method, setMethod] = useState<DepositMethod>("binance");
-  const [rate, setRate] = useState(String(DEFAULT_RATE));
+  const [provider, setProvider] = useState<BdtProvider>("bkash");
   const [reference, setReference] = useState("");
   const [senderPhone, setSenderPhone] = useState("");
   const [note, setNote] = useState("");
@@ -118,17 +136,17 @@ export function DepositDialog() {
 
   const value = Number(amount);
   const amountValid = Number.isFinite(value) && value >= MIN_DEPOSIT;
-  const rateNum = Number(rate);
-  const rateValid = Number.isFinite(rateNum) && rateNum > 0;
+  const activeProvider = bdtProviders.find((p) => p.key === provider)!;
+  const rateNum = activeProvider.rate;
   const bdtTotal = useMemo(
-    () => (amountValid && rateValid ? Math.ceil(value * rateNum) : 0),
-    [amountValid, rateValid, value, rateNum],
+    () => (amountValid ? Math.ceil(value * rateNum) : 0),
+    [amountValid, value, rateNum],
   );
 
   const active = methods.find((m) => m.key === method)!;
   const refValid = reference.trim().length >= 4;
   const phoneValid = method !== "bdt" || /^01\d{9}$/.test(senderPhone.trim());
-  const canSubmit = amountValid && refValid && phoneValid && (method !== "bdt" || rateValid);
+  const canSubmit = amountValid && refValid && phoneValid;
 
   const reset = () => {
     setReference("");
@@ -320,9 +338,11 @@ export function DepositDialog() {
             onClick={() => {
               submitDeposit({
                 method,
-                methodLabel: active.name,
+                methodLabel: method === "bdt" ? `BDT P2P · ${activeProvider.name}` : active.name,
                 amount: Number(value.toFixed(2)),
-                ...(method === "bdt" ? { bdtAmount: bdtTotal, rate: rateNum, senderPhone: senderPhone.trim() } : {}),
+                ...(method === "bdt"
+                  ? { bdtAmount: bdtTotal, rate: rateNum, senderPhone: senderPhone.trim() }
+                  : {}),
                 reference: reference.trim(),
                 ...(note.trim() ? { note: note.trim() } : {}),
               });
