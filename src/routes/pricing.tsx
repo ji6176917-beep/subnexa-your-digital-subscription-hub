@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatUSD, startingPrice } from "@/lib/catalog";
 import { useCatalog } from "@/lib/catalog-store";
+import { CategoryIcon } from "@/lib/category-icons";
 
 const title = "Pricing & Plans — SubNexa";
 const description =
@@ -129,7 +130,9 @@ function PricingPage() {
                         search={{ category: c.slug, q: "" }}
                         className="hover:text-primary"
                       >
-                        {c.emoji} {c.name}
+                        <span className="inline-flex items-center gap-2">
+                          <CategoryIcon slug={c.slug} className="size-4" /> {c.name}
+                        </span>
                       </Link>
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">{c.count}</td>

@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { startingPrice, formatUSD } from "@/lib/catalog";
 import { useCatalog } from "@/lib/catalog-store";
+import { CategoryIconTile } from "@/lib/category-icons";
 
 const title = "All Subscription Categories — SubNexa";
 const description =
@@ -45,9 +46,7 @@ function CategoriesPage() {
               className="group rounded-xl border border-border/70 bg-card p-6 transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-elevated"
             >
               <div className="flex items-center gap-4">
-                <span className="flex size-12 items-center justify-center rounded-lg bg-secondary text-2xl">
-                  {c.emoji}
-                </span>
+                <CategoryIconTile slug={c.slug} />
                 <div>
                   <h2 className="text-lg font-semibold">{c.name}</h2>
                   <p className="text-sm text-muted-foreground">
