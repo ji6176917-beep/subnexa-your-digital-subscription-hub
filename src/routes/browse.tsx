@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { ProductCard } from "@/components/product-card";
 import { startingPrice } from "@/lib/catalog";
 import { useCatalog } from "@/lib/catalog-store";
+import { CategoryIcon } from "@/lib/category-icons";
 
 const title = "Browse Premium Subscriptions — SubNexa";
 const description =
@@ -111,7 +112,7 @@ function BrowsePage() {
             variant={category === c.slug ? "secondary" : "ghost"}
             onClick={() => setSearch({ category: c.slug })}
           >
-            <span className="mr-1">{c.emoji}</span>
+            <CategoryIcon slug={c.slug} className="mr-1 size-4" />
             {c.name} ({c.count})
           </Button>
         ))}

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Check, Copy, Landmark, Smartphone, Wallet, Coins, CreditCard } from "lucide-react";
+import { Check, Copy, Wallet } from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { BdtPairLogo, PaymentLogo, type PaymentBrand } from "@/components/payment-logo";
 import { formatUSD } from "@/lib/catalog";
 import { MIN_DEPOSIT, useWallet, type DepositMethod } from "@/lib/wallet";
 
@@ -19,7 +20,7 @@ type MethodDef = {
   key: DepositMethod;
   name: string;
   short: string;
-  icon: typeof Wallet;
+  brand?: PaymentBrand;
   instruction: string;
   referenceLabel: string;
   referencePlaceholder: string;
@@ -30,7 +31,7 @@ const methods: MethodDef[] = [
     key: "binance",
     name: "Binance Pay (UID)",
     short: "Binance",
-    icon: Coins,
+    brand: "binance",
     instruction:
       "Send the exact amount via Binance Pay to this UID and submit your Binance Order ID / TxID.",
     referenceLabel: "Binance Order ID / TxID",
@@ -40,7 +41,7 @@ const methods: MethodDef[] = [
     key: "usdt",
     name: "USDT (ERC20)",
     short: "USDT",
-    icon: CreditCard,
+    brand: "usdt",
     instruction: "Send USDT (ERC20 only) to this address and submit your Transaction Hash.",
     referenceLabel: "Transaction Hash",
     referencePlaceholder: "0x…",
@@ -49,7 +50,7 @@ const methods: MethodDef[] = [
     key: "epay",
     name: "Epay",
     short: "Epay",
-    icon: Landmark,
+    brand: "epay",
     instruction:
       "Transfer funds to this Epay email account and submit your Epay Batch/Transaction Number.",
     referenceLabel: "Epay Batch / Transaction Number",
@@ -59,7 +60,6 @@ const methods: MethodDef[] = [
     key: "bdt",
     name: "BDT P2P (bKash / Nagad)",
     short: "bKash / Nagad",
-    icon: Smartphone,
     instruction:
       "Send the calculated BDT amount to the respective number and enter the sender phone number and TrxID below.",
     referenceLabel: "TrxID",
@@ -206,9 +206,7 @@ export function DepositDialog() {
                     method === m.key ? "border-primary bg-primary/10" : "border-border/70 hover:border-primary/40"
                   }`}
                 >
-                  <span className="bg-gradient-primary flex size-8 shrink-0 items-center justify-center rounded-md">
-                    <m.icon className="size-4 text-primary-foreground" />
-                  </span>
+                  {m.brand ? <PaymentLogo brand={m.brand} size={22} /> : <BdtPairLogo />}
                   <span className="text-sm font-medium">{m.name}</span>
                 </button>
               ))}
@@ -246,10 +244,15 @@ export function DepositDialog() {
                           : "border-border/70 hover:border-primary/40"
                       }`}
                     >
-                      <p className="text-sm font-semibold">{p.name}</p>
-                      <p className="text-[11px] text-muted-foreground">
-                        Fixed rate ৳{p.rate} per $1
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <PaymentLogo brand={p.key} size={18} />
+                        <div>
+                          <p className="text-sm font-semibold">{p.name}</p>
+                          <p className="text-[11px] text-muted-foreground">
+                            Fixed rate ৳{p.rate} per $1
+                          </p>
+                        </div>
+                      </div>
                     </button>
                   ))}
                 </div>
