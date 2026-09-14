@@ -119,7 +119,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="overflow-x-hidden">
         {children}
         <Scripts />
       </body>
@@ -134,9 +134,9 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <CatalogProvider>
       <WalletProvider>
-        <div className="flex min-h-screen flex-col">
+        <div className="flex min-h-screen min-w-0 flex-col overflow-x-hidden">
           <SiteHeader />
-          <main className="flex-1">
+          <main className="min-w-0 flex-1 overflow-x-hidden">
             {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
             <Outlet />
           </main>

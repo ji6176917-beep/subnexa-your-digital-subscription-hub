@@ -27,6 +27,8 @@ export const Route = createFileRoute("/browse")({
       { name: "description", content: description },
       { property: "og:title", content: title },
       { property: "og:description", content: description },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: BrowsePage,
@@ -82,7 +84,7 @@ function BrowsePage() {
             aria-label="Search subscriptions"
           />
         </div>
-        <div className="flex items-center gap-2 overflow-x-auto">
+        <div className="flex max-w-full items-center gap-2 overflow-x-auto pb-1">
           <SlidersHorizontal className="size-4 shrink-0 text-muted-foreground" />
           {sorts.map((s) => (
             <Button
@@ -97,7 +99,7 @@ function BrowsePage() {
         </div>
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div className="mt-6 flex max-w-full flex-nowrap gap-2 overflow-x-auto pb-2">
         <Button
           size="sm"
           variant={category === "all" ? "secondary" : "ghost"}
@@ -111,6 +113,7 @@ function BrowsePage() {
             size="sm"
             variant={category === c.slug ? "secondary" : "ghost"}
             onClick={() => setSearch({ category: c.slug })}
+            className="shrink-0"
           >
             <CategoryIcon slug={c.slug} className="mr-1 size-4" />
             {c.name} ({c.count})
@@ -137,7 +140,7 @@ function BrowsePage() {
         </div>
       ) : (
         <>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
             {results.slice(0, visible).map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}

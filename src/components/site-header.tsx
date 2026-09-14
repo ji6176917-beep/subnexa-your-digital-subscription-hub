@@ -31,12 +31,12 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
-        <Link to="/" className="flex items-center gap-2">
+      <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 sm:flex sm:gap-4 sm:px-6">
+        <Link to="/" className="flex min-w-0 items-center gap-2">
           <span className="bg-gradient-primary flex size-8 items-center justify-center rounded-lg">
             <Sparkles className="size-4 text-primary-foreground" />
           </span>
-          <span className="font-display text-lg font-bold tracking-tight">SubNexa</span>
+          <span className="truncate font-display text-lg font-bold tracking-tight">SubNexa</span>
         </Link>
 
         <nav className="ml-6 hidden items-center gap-1 lg:flex">
@@ -52,19 +52,19 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1 sm:ml-auto sm:gap-2">
           <Button asChild variant="ghost" size="icon" className="hidden sm:inline-flex">
             <Link to="/browse" aria-label="Search subscriptions">
               <Search className="size-4" />
             </Link>
           </Button>
-          <ThemeToggle />
+          <span className="hidden sm:inline-flex"><ThemeToggle /></span>
 
           <Button
             variant="outline"
             size="sm"
             onClick={() => openDeposit()}
-            className="gap-2"
+            className="gap-1.5 px-2 sm:gap-2 sm:px-3"
             aria-label={`Wallet balance ${shown}. Add funds`}
           >
             <Wallet className="size-4 text-primary" />
@@ -74,7 +74,7 @@ export function SiteHeader() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="Account menu">
+              <Button variant="ghost" size="icon" className="hidden sm:inline-flex" aria-label="Account menu">
                 <User className="size-4" />
               </Button>
             </DropdownMenuTrigger>
